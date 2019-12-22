@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc && pkg . --target node8-win-x86 --out-path package"
   },
   "keywords": [],
   "author": "",
@@ -15,5 +15,12 @@
     "csv-parser": "^2.3.2",
     "export-to-csv": "^0.2.1",
     "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "pkg": "^4.4.2"
+  },
+  "bin": "build/main.js",
+  "pkg": {
+    "scripts": "build/**/*.js"
   }
 }

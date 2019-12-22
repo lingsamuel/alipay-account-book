@@ -46,8 +46,8 @@ function totalAmount(record: AlipayRecord, ignoreEmptyPayType = false) {
     return val;
 }
 
-function main() {
-    const config = JSON.parse(fs.readFileSync(path.join(__dirname, './config.json'), {
+async function main() {
+    const config = JSON.parse(fs.readFileSync(path.join(process.cwd(), './config.json'), {
         encoding: "utf-8"
     }));
 
@@ -68,84 +68,92 @@ function main() {
 
     let i = 0;
 
-    fs.createReadStream(`${config.dataPath}`)
-        .pipe(CsvParser())
-        .on('data', (row) => {
-            const resolved: AlipayRecord = {} as AlipayRecord;
-            Object.keys(row).forEach(originKey => {
-                resolved[originKey.trim()] = row[originKey].trim();
-            });
+    await new Promise(function (resolve, reject) {
+        fs.createReadStream(`${config.dataPath}`)
+            .pipe(CsvParser())
+            .on('data', (row) => {
+                const resolved: AlipayRecord = {} as AlipayRecord;
+                Object.keys(row).forEach(originKey => {
+                    resolved[originKey.trim()] = row[originKey].trim();
+                });
 
-            if (resolved["交易创建时间"] == "") {
-                return;
-            }
+                if (resolved["交易创建时间"] == "") {
+                    return;
+                }
 
-            const delta = totalAmount(resolved);
-            if (delta > 0) {
-                originPaid += delta;
-                paidCount++;
-            } else if (delta < 0) {
-                originGet -= delta;
-                getCount++;
-            } else {
-            }
+                const delta = totalAmount(resolved);
+                if (delta > 0) {
+                    originPaid += delta;
+                    paidCount++;
+                } else if (delta < 0) {
+                    originGet -= delta;
+                    getCount++;
+                } else {
+                }
 
-            let isOther = true;
-            for (const matcher of matchers) {
-                const filename = matcher[0] as string;
-                let matched = true;
-                for (let i = 0; i < matcher.length; i += 3) {
-                    const func = i == 0 ? "AND" : matcher[i] as string;
-                    const keyname = matcher[i + 1] as string;
-                    const conditions = matcher[i + 2] as string[];
-                    if (func == undefined) {
-                        continue;
+                let isOther = true;
+                for (const matcher of matchers) {
+                    const filename = matcher[0] as string;
+                    let matched = true;
+                    for (let i = 0; i < matcher.length; i += 3) {
+                        const func = i == 0 ? "AND" : matcher[i] as string;
+                        const keyname = matcher[i + 1] as string;
+                        const conditions = matcher[i + 2] as string[];
+                        if (func == undefined) {
+                            continue;
+                        }
+                        const content = resolved[keyname].toLowerCase();
+                        const matchResult = conditions.some(condition => content.includes(condition.toLowerCase()));
+                        if (func == "AND") {
+                            matched = matched && matchResult;
+                        } else {
+                            matched = matched || matchResult;
+                        }
+                        if (!matched) {
+                            break;
+                        }
                     }
-                    const content = resolved[keyname].toLowerCase();
-                    const matchResult = conditions.some(condition => content.includes(condition.toLowerCase()));
-                    if (func == "AND") {
-                        matched = matched && matchResult;
-                    } else {
-                        matched = matched || matchResult;
-                    }
-                    if (!matched) {
+                    if (matched) {
+                        if (!(filename in result)) {
+                            result[filename] = [];
+                        }
+                        result[filename].push(resolved);
+                        isOther = false;
                         break;
                     }
                 }
-                if (matched) {
-                    if (!(filename in result)) {
-                        result[filename] = [];
-                    }
-                    result[filename].push(resolved);
-                    isOther = false;
-                    break;
+                if (isOther) {
+                    result["其他"].push(resolved);
                 }
-            }
-            if (isOther) {
-                result["其他"].push(resolved);
-            }
-            i++;
-            return;
-        })
-        .on('end', () => {
-            console.log(`CSV ${i} rows successfully processed`);
-            Object.keys(result).forEach(filename => {
-                export_csv_by_filename(filename, result[filename]);
+                i++;
+                return;
+            })
+            .on('end', () => {
+                console.log(`CSV ${i} rows successfully processed`);
+                Object.keys(result).forEach(filename => {
+                    export_csv_by_filename(filename, result[filename]);
 
-                const total = (result[filename].reduce((acc, record) => {
-                    if (filename == "花呗") {
-                        return acc + totalAmount(record, true);
-                    } else {
-                        return acc + totalAmount(record);
-                    }
-                }, 0));
-                sortedTotal += total;
-                console.log(`${filename} 总共支出 ${total.toFixed(2)} 元。`);
-            });
-            console.log(`总共收入：${originGet.toFixed(2)} 元 ${getCount} 笔，支出 ${originPaid.toFixed(2)} 元 ${paidCount} 笔。`);
-            return;
+                    const total = (result[filename].reduce((acc, record) => {
+                        if (filename == "花呗") {
+                            return acc + totalAmount(record, true);
+                        } else {
+                            return acc + totalAmount(record);
+                        }
+                    }, 0));
+                    sortedTotal += total;
+                    console.log(`${filename} 总共支出 ${total.toFixed(2)} 元。`);
+                });
+                console.log(`总共收入：${originGet.toFixed(2)} 元 ${getCount} 笔，支出 ${originPaid.toFixed(2)} 元 ${paidCount} 笔。`);
+                resolve()
+                return;
+            }).on('error', reject);
+    });
+
+    require('readline')
+        .createInterface(process.stdin, process.stdout)
+        .question("按任意键继续...", function () {
+            process.exit();
         });
-
 }
 
 main();
