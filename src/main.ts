@@ -122,9 +122,9 @@ async function main() {
                         break;
                     }
                 }
-                if (isOther) {
-                    result["其他"].push(resolved);
-                }
+                // if (isOther) {
+                //     result["其他"].push(resolved);
+                // }
                 i++;
                 return;
             })
@@ -144,7 +144,7 @@ async function main() {
                     console.log(`${filename} 总共支出 ${total.toFixed(2)} 元。`);
                 });
                 console.log(`总共收入：${originGet.toFixed(2)} 元 ${getCount} 笔，支出 ${originPaid.toFixed(2)} 元 ${paidCount} 笔。`);
-                resolve()
+                resolve();
                 return;
             }).on('error', reject);
     });
