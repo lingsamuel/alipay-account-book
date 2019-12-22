@@ -4,3 +4,4 @@ node_modules
 .idea
 package/
 *.csv
+*.7z

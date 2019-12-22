@@ -24,6 +24,9 @@ function export_csv(dir, filename, data) {
         useBom: true,
         useKeysAsHeaders: true,
     };
+    if (Array.isArray(data) && data.length == 0) {
+        return;
+    }
 
     const csvExporter = new ExportToCsv(options);
     const csvData = csvExporter.generateCsv(data, true);
@@ -47,19 +50,21 @@ function totalAmount(record: AlipayRecord, ignoreEmptyPayType = false) {
 }
 
 async function main() {
+    console.log(`配置目录：${path.join(process.cwd(), './config.json')}`);
     const config = JSON.parse(fs.readFileSync(path.join(process.cwd(), './config.json'), {
         encoding: "utf-8"
     }));
 
     const matchers = config.matchers;
     const dir = path.dirname(config["dataPath"]);
+    console.log(`数据目录：${dir}`);
 
     const export_csv_by_filename = (f, d) => export_csv(dir, f, d);
 
     const result: {
         [filename: string]: AlipayRecord[]
     } = {};
-    result["其他"] = [];
+    // result["其他"] = [];
     let originGet = 0;
     let originPaid = 0;
     let paidCount = 0;
@@ -146,12 +151,16 @@ async function main() {
                 console.log(`总共收入：${originGet.toFixed(2)} 元 ${getCount} 笔，支出 ${originPaid.toFixed(2)} 元 ${paidCount} 笔。`);
                 resolve();
                 return;
-            }).on('error', reject);
+            })
+            .on('error', (e) => {
+                console.log(e);
+                reject();
+            });
     });
 
     require('readline')
         .createInterface(process.stdin, process.stdout)
-        .question("按任意键继续...", function () {
+        .question("按回车或直接关闭...", function () {
             process.exit();
         });
 }
