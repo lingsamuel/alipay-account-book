@@ -8,7 +8,7 @@
 
 ## 获取支付宝账单
 
-点击这个链接：[支付宝-我的账单](https://consumeprod.alipay.com/record/standard.htm)，
+点击这个链接：[支付宝-我的账单](https://consumeprod.alipay.com/record/standard.htm) (https://consumeprod.alipay.com/record/standard.htm)，
 页面会要求你扫码，然后跳转到主页，再点一次这个链接就能进去了。正常入口有点难找，懒得讲了。
 
 页面底部会有一个下载，下载下来后会有一个 `.csv` 格式的文件，
