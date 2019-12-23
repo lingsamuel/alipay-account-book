@@ -11,6 +11,8 @@
 点击这个链接：[支付宝-我的账单](https://consumeprod.alipay.com/record/standard.htm) (https://consumeprod.alipay.com/record/standard.htm)，
 页面会要求你扫码，然后跳转到主页，再点一次这个链接就能进去了。正常入口有点难找，懒得讲了。
 
+记得切换成标准版。
+
 页面底部会有一个下载，下载下来后会有一个 `.csv` 格式的文件，
 注意，请 **把它的开头部分不符合 CSV 格式的部分删除**。一般来讲，就是前四行。
 
