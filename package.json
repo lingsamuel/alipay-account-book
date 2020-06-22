@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && pkg . --target node8-win-x86 --out-path package"
+    "build": "tsc && pkg . --target node8-win-x86 --out-path package",
+    "run": "tsc && node ./build/main.js"
   },
   "keywords": [],
   "author": "",

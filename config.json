@@ -1,7 +1,9 @@
 {
-  "dataPath": "C:\\Users\\LingSamuel\\WebstormProjects\\alipay-account-book\\data\\alipay_record_20191222.csv",
+  "dataPath": "/home/lingsamuel/AccountBook/alipay_record_20200101_0000__20200622_1415/alipay_record_20200622_1415_1.csv",
   "matchers": [
-    ["余额宝收益", "交易对方", ["天弘基金管理有限公司"], "AND", "商品名称", ["收益发放"]],
+    ["关闭", "交易状态", ["退款成功", "交易关闭"]],
+    ["投资", "交易对方", ["天弘基金管理有限公司", "蚂蚁财富", "基金"]],
+    ["投资", "商品名称", ["闲钱多赚", "理财"]],
 
     ["收入", "资金状态", ["已收入"]],
     ["花呗", "交易对方", ["花呗", "备用金"]],
@@ -10,13 +12,13 @@
 
     ["食物", "交易对方", ["美团", "饿了么"]],
     ["食物", "交易对方", ["肯德基", "一鸣", "便利", "汉堡", "餐", "食", "超市", "亿嘻休闲吧", "灵峰教育后勤",
-      "达克布蕾", "饭", "面", "达吾代", "十足", "生煎", "忆香忆客", "可口可乐", "luckincoffee",
+      "达克布蕾", "饭", "面", "达吾代", "十足", "生煎", "忆香忆客", "可口可乐", "luckincoffee", "瑞幸咖啡", "麦当劳",
       "炒粉干", "汤包", "火锅", "麻辣烫", "米线"]],
     ["食物", "商品名称", ["餐", "二维火", "肯德基"]],
 
     ["游戏", "交易对方", ["北京中电博亚科技有限公司", "Microsoft Payments",
       "WorldPay AP Limited", "AllPay International Limited", "Stripe Inc", "Smart2Pay",
-      "Unity Technologies"]],
+      "Unity Technologies", "摩点", "网易", "索罗游"]],
     ["游戏", "商品名称", ["Steam", "Switch", "Nintendo", "UPlay", "XGP", "XBox", "PLAYSTATION", "humblebundle", "tom clancy", "Epic",
       "年卡", "月卡"]],
     ["硬件", "商品名称", ["rtx", "gtx", "amd", "thinkpad", "ddr", "dell", "cpu"]],

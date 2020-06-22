@@ -57,6 +57,7 @@ async function main() {
 
     const matchers = config.matchers;
     const dir = path.dirname(config["dataPath"]);
+    const exportDir = path.dirname(config["exportPath"] || config["dataPath"]);
     console.log(`数据目录：${dir}`);
 
     const export_csv_by_filename = (f, d) => export_csv(dir, f, d);
